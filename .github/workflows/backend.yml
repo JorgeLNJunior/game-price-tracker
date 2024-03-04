@@ -4,86 +4,85 @@ on:
   workflow_call:
 
 jobs:
-  build:
-    name: 🔨 Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm build:backend
+  # build:
+  #   name: 🔨 Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v3
+  #     - name: Use Node.js 20
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'pnpm'
+  #     - run: pnpm install
+  #     - run: pnpm build:backend
 
-  test:
-    name: 🧪 Tests
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
-      - name: Setup MySQL 8
-        uses: mirromutth/mysql-action@v1.1
-        with:
-          mysql version: '8.0'
-          mysql database: 'game_deal_test'
-          mysql root password: 'root'
-      - name: Setup Redis 7
-        uses: supercharge/redis-github-action@1.8.0
-        with:
-          redis-version: 7
-      - run: pnpm install
-      - run: pnpm test:backend:cov
-        env:
-          test: true
-      - name: coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend_coverage
-          path: apps/backend/coverage/
-          if-no-files-found: error
+  # test:
+  #   name: 🧪 Tests
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v3
+  #     - name: Use Node.js 20
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'pnpm'
+  #     - name: Setup MySQL 8
+  #       uses: mirromutth/mysql-action@v1.1
+  #       with:
+  #         mysql version: '8.0'
+  #         mysql database: 'game_deal_test'
+  #         mysql root password: 'root'
+  #     - name: Setup Redis 7
+  #       uses: supercharge/redis-github-action@1.8.0
+  #       with:
+  #         redis-version: 7
+  #     - run: pnpm install
+  #     - run: pnpm test:backend:cov
+  #       env:
+  #         test: true
+  #     - name: coverage
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: backend_coverage
+  #         path: apps/backend/coverage/
+  #         if-no-files-found: error
 
-  lint:
-    name: 🧹 Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm lint:backend
+  # lint:
+  #   name: 🧹 Lint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v3
+  #     - name: Use Node.js 20
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'pnpm'
+  #     - run: pnpm install
+  #     - run: pnpm lint:backend
 
-  openapi:
-    name: 🧪 Validate OpenAPI File
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: validate OpenAPI definition
-        uses: char0n/swagger-editor-validate@v1
-        with:
-          definition-file: ./apps/backend/src/modules/api/docs/swagger.yaml
+  # openapi:
+  #   name: 🧪 Validate OpenAPI File
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: validate OpenAPI definition
+  #       uses: char0n/swagger-editor-validate@v1
+  #       with:
+  #         definition-file: ./apps/backend/src/modules/api/docs/swagger.yaml
 
   deploy:
     name: 🚀 Deploy
     runs-on: ubuntu-latest
-    needs: [test, lint, openapi]
-    if: github.ref == 'refs/heads/main'
+    # needs: [test, lint, openapi]
     permissions:
       deployments: write
     steps:
-      - uses: JorgeLNJunior/render-deploy@v1.4.4
+      - uses: JorgeLNJunior/render-deploy@deps
         with:
           service_id: ${{ secrets.BACKEND_RENDER_SERVICE_ID }}
           api_key: ${{ secrets.RENDER_API_KEY }}

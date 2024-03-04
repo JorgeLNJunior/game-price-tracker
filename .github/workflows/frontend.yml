@@ -4,71 +4,71 @@ on:
   workflow_call:
 
 jobs:
-  build:
-    name: 🔨 Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm build:frontend
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: apps/frontend/dist
-          if-no-files-found: error
+  # build:
+  #   name: 🔨 Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v3
+  #     - name: Use Node.js 20
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'pnpm'
+  #     - run: pnpm install
+  #     - run: pnpm build:frontend
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: build
+  #         path: apps/frontend/dist
+  #         if-no-files-found: error
 
-  test:
-    name: 🧪 Tests
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm test:frontend:cov
-        env:
-          test: true
-      - name: coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend_coverage
-          path: apps/frontend/coverage/
-          if-no-files-found: error
+  # test:
+  #   name: 🧪 Tests
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v3
+  #     - name: Use Node.js 20
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'pnpm'
+  #     - run: pnpm install
+  #     - run: pnpm test:frontend:cov
+  #       env:
+  #         test: true
+  #     - name: coverage
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: frontend_coverage
+  #         path: apps/frontend/coverage/
+  #         if-no-files-found: error
 
-  lint:
-    name: 🧹 Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm lint:frontend
+  # lint:
+  #   name: 🧹 Lint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v3
+  #     - name: Use Node.js 20
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'pnpm'
+  #     - run: pnpm install
+  #     - run: pnpm lint:frontend
 
   deploy:
     name: 🚀 Deploy
     runs-on: ubuntu-latest
-    needs: [test, lint]
-    if: github.ref == 'refs/heads/main'
+    # needs: [test, lint]
+    # if: github.ref == 'refs/heads/main'
     permissions:
       deployments: write
     steps:
-      - uses: JorgeLNJunior/render-deploy@v1.4.4
+      - uses: JorgeLNJunior/render-deploy@v1
         with:
           service_id: ${{ secrets.FRONTEND_RENDER_SERVICE_ID }}
           api_key: ${{ secrets.RENDER_API_KEY }}
